@@ -61,7 +61,15 @@ document.getElementById('cupom-form').onsubmit = async function(event) {
         });
 
         const data = await response.json();
-        if (!response.ok) {
+        if (response.ok) {
+            // Verifica se as frutas sorteadas são iguais
+            const premio = verificarPremio(frutasSorteadas);
+            if (premio > 0) {
+                alert(`Parabéns! Você ganhou R$${premio}!`);
+            } else {
+                alert("Infelizmente você não ganhou desta vez.");
+            }
+        } else {
             alert(data.error || 'Erro ao registrar a jogada.');
         }
     }, 4500);
@@ -127,4 +135,22 @@ function sortearFruta() {
     const frutas = criarListaPonderada();
     const index = Math.floor(Math.random() * frutas.length);
     return frutas[index];
+}
+
+// Verifica se o jogador ganhou e retorna o valor do prêmio
+function verificarPremio(frutas) {
+    if (frutas[0] === frutas[1] && frutas[1] === frutas[2]) {
+        const premios = {
+            "🍇": 1000,
+            "🍉": 500,
+            "🍒": 300,
+            "🍍": 200,
+            "🍓": 100,
+            "🍋": 50,
+            "🍈": 20,
+            "🥝": 10
+        };
+        return premios[frutas[0]] || 0;
+    }
+    return 0;  // Se não houver frutas iguais, retorna 0 (nenhum prêmio)
 }
