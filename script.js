@@ -1,3 +1,9 @@
+let slotsParados = 0;  // Contador global para rastrear os slots que já pararam
+
+document.addEventListener('DOMContentLoaded', () => {
+    iniciarSlotsAleatorios();  // Inicia as frutas aleatórias ao carregar a página
+});
+
 document.getElementById('cupom-form').onsubmit = async function(event) {
     event.preventDefault();
     
@@ -23,7 +29,7 @@ document.getElementById('cupom-form').onsubmit = async function(event) {
 
     // Resetando o estado dos slots
     resultadoDiv.innerText = "";
-    let slotsParados = 0;  // Contador de slots parados
+    slotsParados = 0;  // Reinicia o contador de slots parados
 
     // Iniciar animação nos slots
     slots.forEach(slot => {
@@ -32,9 +38,20 @@ document.getElementById('cupom-form').onsubmit = async function(event) {
 
     // Parar os slots em tempos diferentes e mostrar o sorteio
     slots.forEach((slot, index) => {
-        pararSlot(slot, sorteio[index], 2000 + (index * 1000), slots);
+        pararSlot(slot, sorteio[index], 2000 + (index * 1000), slots.length);
     });
 };
+
+// Exibe frutas aleatórias ao carregar a página
+function iniciarSlotsAleatorios() {
+    const frutas = criarListaPonderada();
+    const slots = document.querySelectorAll('.slot');
+
+    slots.forEach(slot => {
+        const frutaAleatoria = sortearFruta(frutas);
+        slot.innerHTML = `<div>${frutaAleatoria}</div>`;
+    });
+}
 
 // Criação da lista ponderada de frutas
 function criarListaPonderada() {
@@ -71,16 +88,15 @@ function iniciarRotacao(slot, frutas) {
 }
 
 // Para o slot e exibe a fruta sorteada
-function pararSlot(slot, frutaSorteada, tempo, slots) {
+function pararSlot(slot, frutaSorteada, tempo, totalSlots) {
     setTimeout(() => {
         slot.style.animation = 'none';
         slot.innerHTML = `<div>${frutaSorteada}</div>`;
 
-        // Incrementa o contador global
         slotsParados++;
 
         // Verifica se todos os slots já pararam
-        if (slotsParados === slots.length) {
+        if (slotsParados === totalSlots) {
             verificarResultado();
         }
     }, tempo);
