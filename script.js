@@ -31,13 +31,8 @@ document.getElementById('cupom-form').onsubmit = async function(event) {
     });
 
     // Parar os slots em tempos diferentes e mostrar o sorteio
-    pararSlot(slots[0], sorteio[0], 2000, slots, () => slotsParados++);
-    pararSlot(slots[1], sorteio[1], 3000, slots, () => slotsParados++);
-    pararSlot(slots[2], sorteio[2], 4000, slots, () => {
-        slotsParados++;
-        if (slotsParados === 3) {
-            verificarResultado();
-        }
+    slots.forEach((slot, index) => {
+        pararSlot(slot, sorteio[index], 2000 + (index * 1000), slots);
     });
 };
 
@@ -76,11 +71,18 @@ function iniciarRotacao(slot, frutas) {
 }
 
 // Para o slot e exibe a fruta sorteada
-function pararSlot(slot, frutaSorteada, tempo, slots, callback) {
+function pararSlot(slot, frutaSorteada, tempo, slots) {
     setTimeout(() => {
         slot.style.animation = 'none';
         slot.innerHTML = `<div>${frutaSorteada}</div>`;
-        callback();
+
+        // Incrementa o contador global
+        slotsParados++;
+
+        // Verifica se todos os slots já pararam
+        if (slotsParados === slots.length) {
+            verificarResultado();
+        }
     }, tempo);
 }
 
