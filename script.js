@@ -23,8 +23,7 @@ document.getElementById('cupom-form').onsubmit = async function(event) {
 
     // Iniciar animação nos slots
     slots.forEach(slot => {
-        slot.innerHTML = frutas.map(f => `<div>${f}</div>`).join('');
-        slot.style.animation = 'spin 0.1s linear infinite';
+        iniciarRotacao(slot, frutas);
     });
 
     // Parar os slots em tempos diferentes e mostrar o sorteio
@@ -47,26 +46,42 @@ function criarListaPonderada() {
     return frutas;
 }
 
-// Adiciona frutas à lista ponderada
 function adicionarFruta(lista, fruta, quantidade) {
     for (let i = 0; i < quantidade; i++) {
         lista.push(fruta);
     }
 }
 
-// Sorteio antecipado com base na lista ponderada
-function sortearFruta(lista) {
-    const index = Math.floor(Math.random() * lista.length);
-    return lista[index];
+// Inicia a rotação visual das frutas
+function iniciarRotacao(slot, frutas) {
+    slot.innerHTML = '';
+
+    // Cria uma lista visual que gira continuamente
+    for (let i = 0; i < 20; i++) {
+        const fruta = frutas[Math.floor(Math.random() * frutas.length)];
+        const div = document.createElement('div');
+        div.innerText = fruta;
+        slot.appendChild(div);
+    }
+
+    slot.style.animation = 'spin 0.1s linear infinite';
 }
 
-// Função para parar slot e mostrar o resultado do sorteio
+// Para o slot e exibe a fruta sorteada
 function pararSlot(slot, frutaSorteada, tempo) {
     setTimeout(() => {
         slot.style.animation = 'none';
+
+        // Define o resultado final
         slot.innerHTML = `<div>${frutaSorteada}</div>`;
         verificarResultado();
     }, tempo);
+}
+
+// Sorteio com base na lista ponderada
+function sortearFruta(lista) {
+    const index = Math.floor(Math.random() * lista.length);
+    return lista[index];
 }
 
 // Verifica se houve prêmio e exibe mensagem
