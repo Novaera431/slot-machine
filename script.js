@@ -8,11 +8,19 @@ document.getElementById('cupom-form').onsubmit = async function(event) {
     const cupom = document.getElementById('cupom').value;
     const valor = document.getElementById('valor').value;
     const slots = document.querySelectorAll('.slot');
+    const resultadoDiv = document.getElementById('resultado');
 
     if (!cupom || !valor) {
         alert("Preencha todos os campos!");
         return;
     }
+
+    // Desabilita o botão enquanto os slots giram
+    const botaoJogar = document.querySelector('button[type="submit"]');
+    botaoJogar.disabled = true;
+
+    // Limpa o resultado anterior
+    resultadoDiv.innerText = '';
 
     // Verifica se o cupom já foi usado antes de girar os slots
     const verificaCupom = await fetch('https://slot-machine-backend.onrender.com/api/verificar-cupom', {
@@ -28,6 +36,7 @@ document.getElementById('cupom-form').onsubmit = async function(event) {
     const resultado = await verificaCupom.json();
     if (!verificaCupom.ok) {
         alert(resultado.error || 'Erro ao verificar o cupom.');
+        botaoJogar.disabled = false;  // Habilita o botão se o cupom já foi usado
         return;
     }
 
@@ -61,13 +70,15 @@ document.getElementById('cupom-form').onsubmit = async function(event) {
         });
 
         const data = await response.json();
+        botaoJogar.disabled = false;  // Habilita o botão após a jogada
+
         if (response.ok) {
             // Verifica se as frutas sorteadas são iguais
             const premio = verificarPremio(frutasSorteadas);
             if (premio > 0) {
-                alert(`Parabéns! Você ganhou R$${premio}!`);
+                resultadoDiv.innerText = `🎉 Parabéns! Você ganhou R$${premio}!`;
             } else {
-                alert("Infelizmente você não ganhou desta vez.");
+                resultadoDiv.innerText = "😔 Infelizmente você não ganhou desta vez.";
             }
         } else {
             alert(data.error || 'Erro ao registrar a jogada.');
