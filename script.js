@@ -51,7 +51,7 @@ document.getElementById('cupom-form').onsubmit = async function(event) {
         spinSound.currentTime = 0;
 
         // Enviar cupom ao backend
-        fetch('http://127.0.0.1:5000/api/jogar', {
+        fetch('https://slot-machine-backend.onrender.com', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ cupom })
