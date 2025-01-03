@@ -23,6 +23,7 @@ document.getElementById('cupom-form').onsubmit = async function(event) {
 
     // Resetando o estado dos slots
     resultadoDiv.innerText = "";
+    let slotsParados = 0;  // Contador de slots parados
 
     // Iniciar animação nos slots
     slots.forEach(slot => {
@@ -30,11 +31,14 @@ document.getElementById('cupom-form').onsubmit = async function(event) {
     });
 
     // Parar os slots em tempos diferentes e mostrar o sorteio
-    let slotsParados = 0;
-
-    pararSlot(slots[0], sorteio[0], 2000);
-    pararSlot(slots[1], sorteio[1], 3000);
-    pararSlot(slots[2], sorteio[2], 4000, true);  // O último slot dispara o resultado
+    pararSlot(slots[0], sorteio[0], 2000, slots, () => slotsParados++);
+    pararSlot(slots[1], sorteio[1], 3000, slots, () => slotsParados++);
+    pararSlot(slots[2], sorteio[2], 4000, slots, () => {
+        slotsParados++;
+        if (slotsParados === 3) {
+            verificarResultado();
+        }
+    });
 };
 
 // Criação da lista ponderada de frutas
@@ -68,19 +72,15 @@ function iniciarRotacao(slot, frutas) {
         slot.appendChild(div);
     }
 
-    // Ajuste na velocidade de rotação
     slot.style.animation = 'spin 0.3s linear infinite';
 }
 
 // Para o slot e exibe a fruta sorteada
-function pararSlot(slot, frutaSorteada, tempo, ultimo = false) {
+function pararSlot(slot, frutaSorteada, tempo, slots, callback) {
     setTimeout(() => {
         slot.style.animation = 'none';
-
         slot.innerHTML = `<div>${frutaSorteada}</div>`;
-        if (ultimo) {
-            verificarResultado();
-        }
+        callback();
     }, tempo);
 }
 
