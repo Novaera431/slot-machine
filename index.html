@@ -10,42 +10,26 @@
     <div class="container">
         <h1>Slot Machine - Promoção Nova Era</h1>
         <form id="cupom-form">
-            <input type="text" id="cupom" placeholder="Digite o código do cupom fiscal" required>
+            <input type="text" id="cupom" placeholder="Código do cupom (somente números)" required pattern="[0-9]+" title="Apenas números">
+            <input type="number" id="valor" placeholder="Valor da compra (R$)" required step="0.01" min="0">
             <button type="submit">Jogar</button>
         </form>
 
         <div class="slot-machine">
             <div class="slot-wrapper">
-                <div class="slot" id="slot1">
-                    <div>🍒</div>
-                    <div>🍍</div>
-                    <div>🍉</div>
-                    <div>🍇</div>
-                    <div>🍓</div>
-                </div>
+                <div class="slot" id="slot1"></div>
             </div>
             <div class="slot-wrapper">
-                <div class="slot" id="slot2">
-                    <div>🍒</div>
-                    <div>🍍</div>
-                    <div>🍉</div>
-                    <div>🍇</div>
-                    <div>🍓</div>
-                </div>
+                <div class="slot" id="slot2"></div>
             </div>
             <div class="slot-wrapper">
-                <div class="slot" id="slot3">
-                    <div>🍒</div>
-                    <div>🍍</div>
-                    <div>🍉</div>
-                    <div>🍇</div>
-                    <div>🍓</div>
-                </div>
+                <div class="slot" id="slot3"></div>
             </div>
         </div>
 
         <div id="resultado"></div>
     </div>
+
     <script src="script.js"></script>
 </body>
 </html>
