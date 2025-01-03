@@ -145,7 +145,7 @@ function verificarPremio(frutas) {
         const premios = {
             "🍇": 1000,
             "🍉": 500,
-            "🍒": 300
+            "🍒": 300,
             "🍍": 200,
             "🍓": 100,
             "🍋": 50,
