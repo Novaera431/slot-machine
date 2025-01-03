@@ -14,9 +14,24 @@ document.getElementById('cupom-form').onsubmit = async function(event) {
         return;
     }
 
-    const frutas = Array.from(slots).map(slot => slot.innerText);
+    // Verifica se o cupom já foi usado antes de girar os slots
+    const verificaCupom = await fetch('https://slot-machine-backend.onrender.com/api/verificar-cupom', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            cupom: cupom
+        })
+    });
 
-    // Iniciar a rotação visual dos slots
+    const resultado = await verificaCupom.json();
+    if (!verificaCupom.ok) {
+        alert(resultado.error || 'Erro ao verificar o cupom.');
+        return;
+    }
+
+    // Iniciar a rotação visual dos slots após verificar o cupom
     iniciarRotacao(slots);
 
     // Sorteio antecipado das frutas
@@ -31,7 +46,7 @@ document.getElementById('cupom-form').onsubmit = async function(event) {
     pararSlot(slots[1], frutasSorteadas[1], 3000);
     pararSlot(slots[2], frutasSorteadas[2], 4000);
 
-    // Enviar jogada ao backend após o último slot parar
+    // Envia jogada ao backend após o último slot parar
     setTimeout(async () => {
         const response = await fetch('https://slot-machine-backend.onrender.com/api/jogar', {
             method: 'POST',
@@ -49,7 +64,7 @@ document.getElementById('cupom-form').onsubmit = async function(event) {
         if (!response.ok) {
             alert(data.error || 'Erro ao registrar a jogada.');
         }
-    }, 4500);  // Aguarda todos os slots pararem
+    }, 4500);
 };
 
 // Exibe frutas aleatórias ao carregar a página
