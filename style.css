@@ -29,22 +29,20 @@ body {
 }
 
 .slot {
+    font-size: 60px;
     display: flex;
     flex-direction: column;
-    align-items: center;
     position: absolute;
-    top: -300px;
-    animation: spin-sequence 1s linear infinite;
-    font-size: 80px;
-    text-align: center;
-}
-.slot div {
-    font-size: 60px;
-    height: 100px;
-    line-height: 100px;
+    animation: spin 0.1s linear infinite;
 }
 
-@keyframes spin-sequence {
+.slot div {
+    height: 100px;
+    line-height: 100px;
+    text-align: center;
+}
+
+@keyframes spin {
     0% {
         transform: translateY(-100%);
     }
