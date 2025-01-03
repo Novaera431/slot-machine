@@ -9,6 +9,7 @@ document.getElementById('cupom-form').onsubmit = async function(event) {
     const valor = document.getElementById('valor').value;
     const slots = document.querySelectorAll('.slot');
     const resultadoDiv = document.getElementById('resultado');
+    const botaoJogar = document.getElementById('botao-jogar');
 
     if (!cupom || !valor) {
         alert("Preencha todos os campos!");
@@ -16,11 +17,8 @@ document.getElementById('cupom-form').onsubmit = async function(event) {
     }
 
     // Desabilita o botão enquanto os slots giram
-    const botaoJogar = document.querySelector('button[type="submit"]');
     botaoJogar.disabled = true;
-
-    // Limpa o resultado anterior
-    resultadoDiv.innerText = '';
+    resultadoDiv.innerText = '';  // Limpa o resultado anterior
 
     // Verifica se o cupom já foi usado antes de girar os slots
     const verificaCupom = await fetch('https://slot-machine-backend.onrender.com/api/verificar-cupom', {
@@ -36,7 +34,7 @@ document.getElementById('cupom-form').onsubmit = async function(event) {
     const resultado = await verificaCupom.json();
     if (!verificaCupom.ok) {
         alert(resultado.error || 'Erro ao verificar o cupom.');
-        botaoJogar.disabled = false;  // Habilita o botão se o cupom já foi usado
+        botaoJogar.disabled = false;
         return;
     }
 
@@ -121,7 +119,7 @@ function adicionarFruta(lista, fruta, quantidade) {
 // Inicia a rotação visual dos slots
 function iniciarRotacao(slots) {
     slots.forEach(slot => {
-        slot.innerHTML = '';  // Limpa o slot para iniciar rotação
+        slot.innerHTML = '';
 
         for (let i = 0; i < 20; i++) {
             const fruta = sortearFruta();
@@ -141,27 +139,15 @@ function pararSlot(slot, frutaSorteada, tempo) {
     }, tempo);
 }
 
-// Sorteia uma fruta com base na lista ponderada
-function sortearFruta() {
-    const frutas = criarListaPonderada();
-    const index = Math.floor(Math.random() * frutas.length);
-    return frutas[index];
-}
-
-// Verifica se o jogador ganhou e retorna o valor do prêmio
+// Verifica se o jogador ganhou
 function verificarPremio(frutas) {
     if (frutas[0] === frutas[1] && frutas[1] === frutas[2]) {
         const premios = {
             "🍇": 1000,
             "🍉": 500,
-            "🍒": 300,
-            "🍍": 200,
-            "🍓": 100,
-            "🍋": 50,
-            "🍈": 20,
-            "🥝": 10
+            "🍒": 300
         };
         return premios[frutas[0]] || 0;
     }
-    return 0;  // Se não houver frutas iguais, retorna 0 (nenhum prêmio)
+    return 0;
 }
