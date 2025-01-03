@@ -21,15 +21,20 @@ document.getElementById('cupom-form').onsubmit = async function(event) {
         sortearFruta(frutas)
     ];
 
+    // Resetando o estado dos slots
+    resultadoDiv.innerText = "";
+
     // Iniciar animação nos slots
     slots.forEach(slot => {
         iniciarRotacao(slot, frutas);
     });
 
     // Parar os slots em tempos diferentes e mostrar o sorteio
+    let slotsParados = 0;
+
     pararSlot(slots[0], sorteio[0], 2000);
     pararSlot(slots[1], sorteio[1], 3000);
-    pararSlot(slots[2], sorteio[2], 4000);
+    pararSlot(slots[2], sorteio[2], 4000, true);  // O último slot dispara o resultado
 };
 
 // Criação da lista ponderada de frutas
@@ -56,7 +61,6 @@ function adicionarFruta(lista, fruta, quantidade) {
 function iniciarRotacao(slot, frutas) {
     slot.innerHTML = '';
 
-    // Cria uma lista visual que gira continuamente
     for (let i = 0; i < 20; i++) {
         const fruta = frutas[Math.floor(Math.random() * frutas.length)];
         const div = document.createElement('div');
@@ -64,27 +68,23 @@ function iniciarRotacao(slot, frutas) {
         slot.appendChild(div);
     }
 
-    slot.style.animation = 'spin 0.1s linear infinite';
+    // Ajuste na velocidade de rotação
+    slot.style.animation = 'spin 0.3s linear infinite';
 }
 
 // Para o slot e exibe a fruta sorteada
-function pararSlot(slot, frutaSorteada, tempo) {
+function pararSlot(slot, frutaSorteada, tempo, ultimo = false) {
     setTimeout(() => {
         slot.style.animation = 'none';
 
-        // Define o resultado final
         slot.innerHTML = `<div>${frutaSorteada}</div>`;
-        verificarResultado();
+        if (ultimo) {
+            verificarResultado();
+        }
     }, tempo);
 }
 
-// Sorteio com base na lista ponderada
-function sortearFruta(lista) {
-    const index = Math.floor(Math.random() * lista.length);
-    return lista[index];
-}
-
-// Verifica se houve prêmio e exibe mensagem
+// Verifica se houve prêmio e exibe mensagem uma vez
 function verificarResultado() {
     const slots = document.querySelectorAll('.slot div');
     const frutasSorteadas = Array.from(slots).map(slot => slot.innerText);
