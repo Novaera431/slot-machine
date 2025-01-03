@@ -16,15 +16,19 @@ document.getElementById('cupom-form').onsubmit = async function(event) {
         return;
     }
 
+    // Desabilita o botão enquanto os slots giram
     botaoJogar.disabled = true;
     resultadoDiv.innerText = '';  // Limpa o resultado anterior
 
+    // Verifica se o cupom já foi usado antes de girar os slots
     const verificaCupom = await fetch('https://slot-machine-backend.onrender.com/api/verificar-cupom', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ cupom: cupom })
+        body: JSON.stringify({
+            cupom: cupom
+        })
     });
 
     const resultado = await verificaCupom.json();
@@ -34,18 +38,22 @@ document.getElementById('cupom-form').onsubmit = async function(event) {
         return;
     }
 
+    // Iniciar a rotação visual dos slots após verificar o cupom
     iniciarRotacao(slots);
 
+    // Sorteio antecipado das frutas
     const frutasSorteadas = [
         sortearFruta(),
         sortearFruta(),
         sortearFruta()
     ];
 
+    // Parar os slots em tempos diferentes
     pararSlot(slots[0], frutasSorteadas[0], 2000);
     pararSlot(slots[1], frutasSorteadas[1], 3000);
     pararSlot(slots[2], frutasSorteadas[2], 4000);
 
+    // Envia jogada ao backend após o último slot parar
     setTimeout(async () => {
         const response = await fetch('https://slot-machine-backend.onrender.com/api/jogar', {
             method: 'POST',
@@ -60,12 +68,13 @@ document.getElementById('cupom-form').onsubmit = async function(event) {
         });
 
         const data = await response.json();
-        botaoJogar.disabled = false;
+        botaoJogar.disabled = false;  // Habilita o botão após a jogada
 
         if (response.ok) {
+            // Verifica se as frutas sorteadas são iguais
             const premio = verificarPremio(frutasSorteadas);
             if (premio > 0) {
-                resultadoDiv.innerText = `🎉 Parabéns! Você ganhou um cupom de R$${premio},00 com ${frutasSorteadas[0]}!`;
+                resultadoDiv.innerText = `🎉 Parabéns! Você ganhou R$${premio}!`;
             } else {
                 resultadoDiv.innerText = "😔 Infelizmente você não ganhou desta vez.";
             }
@@ -130,20 +139,13 @@ function pararSlot(slot, frutaSorteada, tempo) {
     }, tempo);
 }
 
-// Sorteia uma fruta com base na lista ponderada
-function sortearFruta() {
-    const frutas = criarListaPonderada();
-    const index = Math.floor(Math.random() * frutas.length);
-    return frutas[index];
-}
-
-// Verifica se o jogador ganhou e retorna o valor do prêmio
+// Verifica se o jogador ganhou
 function verificarPremio(frutas) {
     if (frutas[0] === frutas[1] && frutas[1] === frutas[2]) {
         const premios = {
             "🍇": 1000,
             "🍉": 500,
-            "🍒": 300,
+            "🍒": 300
             "🍍": 200,
             "🍓": 100,
             "🍋": 50,
@@ -152,5 +154,5 @@ function verificarPremio(frutas) {
         };
         return premios[frutas[0]] || 0;
     }
-    return 0;  // Se não houver frutas iguais, retorna 0 (nenhum prêmio)
+    return 0;
 }
