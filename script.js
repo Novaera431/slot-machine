@@ -11,25 +11,26 @@ document.getElementById('cupom-form').onsubmit = async function(event) {
         return;
     }
 
+    // Criação da lista ponderada de frutas
     const frutas = criarListaPonderada();
-    const sorteio = [sortearFruta(frutas), sortearFruta(frutas), sortearFruta(frutas)];
+    
+    // Sorteio antecipado das frutas
+    const sorteio = [
+        sortearFruta(frutas),
+        sortearFruta(frutas),
+        sortearFruta(frutas)
+    ];
 
-    // Exibe as frutas nos slots
-    slots.forEach((slot, index) => {
-        slot.innerText = sorteio[index];
+    // Iniciar animação nos slots
+    slots.forEach(slot => {
+        slot.innerHTML = frutas.map(f => `<div>${f}</div>`).join('');
+        slot.style.animation = 'spin 0.1s linear infinite';
     });
 
-    // Verifica se há prêmios
-    const premio = calcularPremio(sorteio);
-
-    // Exibe popup com o resultado
-    setTimeout(() => {
-        if (premio > 0) {
-            alert(`Parabéns! Você ganhou R$${premio.toFixed(2)}!`);
-        } else {
-            alert("Infelizmente você não ganhou desta vez. Tente novamente!");
-        }
-    }, 500);
+    // Parar os slots em tempos diferentes e mostrar o sorteio
+    pararSlot(slots[0], sorteio[0], 2000);
+    pararSlot(slots[1], sorteio[1], 3000);
+    pararSlot(slots[2], sorteio[2], 4000);
 };
 
 // Criação da lista ponderada de frutas
@@ -46,34 +47,52 @@ function criarListaPonderada() {
     return frutas;
 }
 
-// Adiciona frutas à lista proporcionalmente
+// Adiciona frutas à lista ponderada
 function adicionarFruta(lista, fruta, quantidade) {
     for (let i = 0; i < quantidade; i++) {
         lista.push(fruta);
     }
 }
 
-// Sorteio ponderado de frutas
+// Sorteio antecipado com base na lista ponderada
 function sortearFruta(lista) {
     const index = Math.floor(Math.random() * lista.length);
     return lista[index];
 }
 
-// Calcula o prêmio com base no sorteio
-function calcularPremio(sorteio) {
-    const [slot1, slot2, slot3] = sorteio;
-    if (slot1 === slot2 && slot2 === slot3) {
-        switch (slot1) {
-            case "🍇": return 1000;
-            case "🍉": return 500;
-            case "🍒": return 300;
-            case "🍍": return 200;
-            case "🍓": return 100;
-            case "🍋": return 50;
-            case "🍈": return 20;
-            case "🥝": return 10;
-            default: return 0;
-        }
+// Função para parar slot e mostrar o resultado do sorteio
+function pararSlot(slot, frutaSorteada, tempo) {
+    setTimeout(() => {
+        slot.style.animation = 'none';
+        slot.innerHTML = `<div>${frutaSorteada}</div>`;
+        verificarResultado();
+    }, tempo);
+}
+
+// Verifica se houve prêmio e exibe mensagem
+function verificarResultado() {
+    const slots = document.querySelectorAll('.slot div');
+    const frutasSorteadas = Array.from(slots).map(slot => slot.innerText);
+
+    if (frutasSorteadas.every((fruta, _, arr) => fruta === arr[0])) {
+        const premio = calcularPremio(frutasSorteadas[0]);
+        alert(`Parabéns! Você ganhou R$${premio}!`);
+    } else {
+        alert("Infelizmente você não ganhou desta vez.");
     }
-    return 0;  // Sem prêmio se as frutas forem diferentes
+}
+
+// Calcula o prêmio com base na fruta sorteada
+function calcularPremio(fruta) {
+    const premios = {
+        "🍇": 1000,
+        "🍉": 500,
+        "🍒": 300,
+        "🍍": 200,
+        "🍓": 100,
+        "🍋": 50,
+        "🍈": 20,
+        "🥝": 10
+    };
+    return premios[fruta] || 0;
 }
