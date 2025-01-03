@@ -35,8 +35,9 @@ body {
     position: absolute;
     top: -300px;
     animation: spin-sequence 1s linear infinite;
+    font-size: 80px;
+    text-align: center;
 }
-
 .slot div {
     font-size: 60px;
     height: 100px;
